@@ -1,11 +1,8 @@
-from flask import Flask, render_template, url_for, flash, redirect
-from forms import RegistrationForm, LoginForm
+from pythonic.models import User, Lesson, Course
+from flask import render_template, url_for, flash, redirect
+from pythonic.forms import RegistrationForm, LoginForm
+from pythonic import app
 
-app = Flask(__name__)
-
-app.config[
-    "SECRET_KEY"
-] = "62913a7dac3933f87a84626fcdeaaf9e2653f0a000843efd9bf2b31ba4767402"
 
 lessons = [
     {
@@ -113,7 +110,3 @@ def login():
         else:
             flash("Login Unsuccessful. Please check credentials", "danger")
     return render_template("login.html", title="Login", form=form)
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
