@@ -100,9 +100,9 @@ class NewLessonForm(FlaskForm):
     title = StringField("Lesson Title", validators=[DataRequired(), Length(max=100)])
     slug = StringField(
         "Slug",
-        validators=[DataRequired(), Length(max=32)],
+        validators=[DataRequired(), Length(max=100)],
         render_kw={
-            "placeholder": "Descriptive short version of your title. SEO friendly"
+            "placeholder": "Descriptive short version of your title."
         },
     )
     content = CKEditorField(
@@ -111,6 +111,9 @@ class NewLessonForm(FlaskForm):
     thumbnail = FileField(
         "Thumbnail", validators=[DataRequired(), FileAllowed(["jpg", "png"])]
     )
+            # New field for video upload
+    video = FileField('Video', validators=[DataRequired(), FileAllowed(["mp4", "avi", "mov", "mkv", "flv"])])  # Added video types
+
     submit = SubmitField("Post")
 
 
