@@ -20,87 +20,17 @@ from flask_login import (
 )
 
 
-lessons = [
-    {
-        "title": "Request Library Course",
-        "course": "Python",
-        "author": "Omar",
-        "thumbnail": "thumbnail.jpg",
-    },
-    {
-        "title": "Request Library Course",
-        "course": "Python",
-        "author": "Omar",
-        "thumbnail": "thumbnail.jpg",
-    },
-    {
-        "title": "Request Library Course",
-        "course": "Python",
-        "author": "Omar",
-        "thumbnail": "thumbnail.jpg",
-    },
-    {
-        "title": "Request Library Course",
-        "course": "Python",
-        "author": "Omar",
-        "thumbnail": "thumbnail.jpg",
-    },
-    {
-        "title": "Request Library Course",
-        "course": "Python",
-        "author": "Omar",
-        "thumbnail": "thumbnail.jpg",
-    },
-    {
-        "title": "Request Library Course",
-        "course": "Python",
-        "author": "Omar",
-        "thumbnail": "thumbnail.jpg",
-    },
-]
-
-courses = [
-    {
-        "name": "Python",
-        "icon": "python.svg",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque quidem nihil dolor officiis at magni!",
-    },
-    {
-        "name": "Data Analysis",
-        "icon": "analysis.png",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque quidem nihil dolor officiis at magni!",
-    },
-    {
-        "name": "Machine Learning",
-        "icon": "machine-learning.png",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque quidem nihil dolor officiis at magni!",
-    },
-    {
-        "name": "Web Design",
-        "icon": "web.png",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque quidem nihil dolor officiis at magni!",
-    },
-    {
-        "name": "Blockchain",
-        "icon": "blockchain.png",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque quidem nihil dolor officiis at magni!",
-    },
-    {
-        "name": "Tips & Tricks",
-        "icon": "idea.png",
-        "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Neque quidem nihil dolor officiis at magni!",
-    },
-]
-
-
-def save_picture(form_picture):
+    
+def save_picture(form_picture, path, output_size=None):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
+    if not f_ext:
+        raise ValueError("Invalid file extension")
     picture_name = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, "static/user_pics", picture_name)
-    output_size = (150, 150)
+    picture_path = os.path.join(app.root_path, path, picture_name)
     i = Image.open(form_picture)
-    i.thumbnail(output_size)
+    if output_size:
+        i.thumbnail(output_size)
     i.save(picture_path)
     return picture_name
 
@@ -189,7 +119,9 @@ def profile():
     profile_form = UpdateProfileForm()
     if profile_form.validate_on_submit():
         if profile_form.picture.data:
-            picture_file = save_picture(profile_form.picture.data)
+            picture_file = save_picture(
+                profile_form.picture.data, "static/user_pics", output_size=(150, 150)
+            )
             current_user.image_file = picture_file
         current_user.username = profile_form.username.data
         current_user.email = profile_form.email.data
@@ -226,6 +158,14 @@ def new_lesson():
 
     # معالجة نموذج إضافة درس جديد
     if form == "new_lesson_form" and new_lesson_form.validate_on_submit():
+        if new_lesson_form.thumbnail.data:
+            try:
+                picture_file = save_picture(
+                    new_lesson_form.thumbnail.data, "static/lesson_thumbnails"
+                )
+            except ValueError as e:
+                flash(e.message, 'error')
+                return redirect(url_for('new_lesson'))
         lesson_slug = str(new_lesson_form.slug.data).replace(" ", "-")
         course = new_lesson_form.course.data
         lesson = Lesson(
@@ -234,6 +174,8 @@ def new_lesson():
             slug=lesson_slug,
             author=current_user,  # حفظ المستخدم الحالي
             course_name=course,
+            thumbnail=picture_file,
+
         )
         db.session.add(lesson)
         db.session.commit()
@@ -242,10 +184,16 @@ def new_lesson():
 
     # معالجة نموذج إضافة كورس جديد
     elif form == "new_course_form" and new_course_form.validate_on_submit():
+        if new_course_form.icon.data:
+            picture_file = save_picture(
+                new_course_form.icon.data, "static/course_icons", output_size=(150, 150)
+            )
         course_title = str(new_course_form.title.data).replace(" ", "-")
         course = Course(
             title=course_title,
             description=new_course_form.description.data,
+            icon=picture_file,
+
         )
         db.session.add(course)
         db.session.commit()
@@ -268,3 +216,38 @@ def new_lesson():
         modal=modal,
         courses=courses,  # تمرير الكورسات إلى القالب
     )
+    
+    
+
+@app.route("/<string:course>/<string:lesson_slug>")
+def lesson(lesson_slug, course):
+    lesson = Lesson.query.filter_by(slug=lesson_slug).first()
+    if lesson:
+        previous_lesson, next_lesson = get_previous_next_lesson(lesson)
+    lesson_id = lesson.id if lesson else None
+    lesson = Lesson.query.get_or_404(lesson_id)
+    return render_template(
+        "lesson.html",
+        title=lesson.title,
+        lesson=lesson,
+        previous_lesson=previous_lesson,
+        next_lesson=next_lesson,
+    )
+
+
+@app.route("/<string:course_title>")
+def course(course_title):
+    course = Course.query.filter_by(title=course_title).first()
+    course_id = course.id if course else None
+    course = Course.query.get_or_404(course_id)
+    return render_template(
+        "course.html",
+        title=course.title,
+        course=course,
+    )
+
+
+@app.route("/courses")
+def courses():
+    courses = Course.query.all()
+    return render_template("courses.html", title="Courses", courses=courses)
