@@ -19,21 +19,47 @@ from flask_login import (
     login_required,
 )
 
+from werkzeug.utils import secure_filename
+
+
+
+
+
+def save_video(form_video, folder):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_video.filename)
+    
+    if not f_ext:
+        raise ValueError("Invalid file extension for video")
+    
+    video_fn = random_hex + f_ext
+    video_path = os.path.join(os.getcwd(), folder, video_fn)
+
+    # إنشاء المجلد إذا لم يكن موجودًا
+    os.makedirs(os.path.dirname(video_path), exist_ok=True)
+    
+    form_video.save(video_path)
+    return video_fn
 
     
 def save_picture(form_picture, path, output_size=None):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
+    
     if not f_ext:
-        raise ValueError("Invalid file extension")
+        raise ValueError("Invalid file extension for picture")
+    
     picture_name = random_hex + f_ext
     picture_path = os.path.join(app.root_path, path, picture_name)
+
+    # إنشاء المجلد إذا لم يكن موجودًا
+    os.makedirs(os.path.dirname(picture_path), exist_ok=True)
+    
     i = Image.open(form_picture)
     if output_size:
         i.thumbnail(output_size)
     i.save(picture_path)
     return picture_name
-
 
 def get_previous_next_lesson(lesson):
     course = lesson.course_name
@@ -141,6 +167,11 @@ def profile():
         image_file=image_file,
         active_tab="profile",
     )
+
+
+
+
+
 @app.route("/dashboard/new_lesson", methods=["GET", "POST"])
 @login_required
 def new_lesson():
@@ -158,14 +189,27 @@ def new_lesson():
 
     # معالجة نموذج إضافة درس جديد
     if form == "new_lesson_form" and new_lesson_form.validate_on_submit():
+        thumbnail_file = None
+        video_file = None
+
         if new_lesson_form.thumbnail.data:
             try:
-                picture_file = save_picture(
+                thumbnail_file = save_picture(
                     new_lesson_form.thumbnail.data, "static/lesson_thumbnails"
                 )
             except ValueError as e:
                 flash(e.message, 'error')
                 return redirect(url_for('new_lesson'))
+
+        if new_lesson_form.video.data:
+            try:
+                video_file = save_video(
+                    new_lesson_form.video.data, "pythonic/static/lesson_videos"
+                )
+            except ValueError as e:
+                flash(e.message, 'error')
+                return redirect(url_for('new_lesson'))
+
         lesson_slug = str(new_lesson_form.slug.data).replace(" ", "-")
         course = new_lesson_form.course.data
         lesson = Lesson(
@@ -174,8 +218,8 @@ def new_lesson():
             slug=lesson_slug,
             author=current_user,  # حفظ المستخدم الحالي
             course_name=course,
-            thumbnail=picture_file,
-
+            thumbnail=thumbnail_file,
+            video=video_file,
         )
         db.session.add(lesson)
         db.session.commit()
@@ -193,7 +237,6 @@ def new_lesson():
             title=course_title,
             description=new_course_form.description.data,
             icon=picture_file,
-
         )
         db.session.add(course)
         db.session.commit()
@@ -216,23 +259,39 @@ def new_lesson():
         modal=modal,
         courses=courses,  # تمرير الكورسات إلى القالب
     )
-    
-    
 
 @app.route("/<string:course>/<string:lesson_slug>")
-def lesson(lesson_slug, course):
-    lesson = Lesson.query.filter_by(slug=lesson_slug).first()
-    if lesson:
-        previous_lesson, next_lesson = get_previous_next_lesson(lesson)
-    lesson_id = lesson.id if lesson else None
-    lesson = Lesson.query.get_or_404(lesson_id)
+def lesson(course, lesson_slug):
+    # أولاً نحصل على الكورس
+    course_obj = Course.query.filter_by(title=course).first_or_404()
+    
+    # ثم نحصل على الدرس باستخدام الكورس والسلاج
+    lesson = Lesson.query.filter_by(
+        slug=lesson_slug,
+        course_id=course_obj.id
+    ).first_or_404()
+    
+    # نحصل على الدرس السابق والتالي
+    previous_lesson = Lesson.query.filter(
+        Lesson.course_id == lesson.course_id,
+        Lesson.id < lesson.id
+    ).order_by(Lesson.id.desc()).first()
+    
+    next_lesson = Lesson.query.filter(
+        Lesson.course_id == lesson.course_id,
+        Lesson.id > lesson.id
+    ).order_by(Lesson.id.asc()).first()
+
     return render_template(
         "lesson.html",
-        title=lesson.title,
         lesson=lesson,
         previous_lesson=previous_lesson,
-        next_lesson=next_lesson,
+        next_lesson=next_lesson
     )
+
+
+
+
 
 
 @app.route("/<string:course_title>")
@@ -271,4 +330,3 @@ def delete_lesson(lesson_id):
     db.session.commit()
     flash("Your lesson has been deleted!", "success")
     return redirect(url_for("user_lessons"))
-
