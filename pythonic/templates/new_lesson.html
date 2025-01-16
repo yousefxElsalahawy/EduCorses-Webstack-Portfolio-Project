@@ -6,84 +6,98 @@
     role="tabpanel" aria-labelledby="nav-newLesson-tab">
     <form action="/dashboard/new_lesson" method="POST" enctype="multipart/form-data">
         {{ new_lesson_form.hidden_tag() }}
-        <legend class="border-bottom my-3">New Lesson</legend>
+        <legend class="border-bottom my-3 text-warning">New Lesson</legend>
 
         <!-- Course field -->
         <div class="mb-3">
-            {{ new_lesson_form.course.label(class='form-control-label') }}
+            {{ new_lesson_form.course.label(class='form-control-label text-light') }}
             {% if new_lesson_form.course.errors %}
-                {{ new_lesson_form.course(class='form-select is-invalid', id='course') }}
+                {{ new_lesson_form.course(class='form-select is-invalid', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
                 <div class="invalid-feedback">
                     {% for error in new_lesson_form.course.errors %}
                         <span>{{ error }}</span>
                     {% endfor %}
                 </div>
             {% else %}
-                {{ new_lesson_form.course(class='form-select', id='course') }}
+                {{ new_lesson_form.course(class='form-select', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
             {% endif %}
-            <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#newCourse">
+            <button type="button" class="btn btn-outline-warning mt-3" data-bs-toggle="modal" data-bs-target="#newCourse">
                 New Course?
             </button>
         </div>
-        
-        
+
         <!-- Title field -->
         <div class="mb-3">
-            {{ new_lesson_form.title.label(class='form-control-label') }}
+            {{ new_lesson_form.title.label(class='form-control-label text-light') }}
             {% if new_lesson_form.title.errors %}
-                {{ new_lesson_form.title(class='form-control is-invalid') }}
+                {{ new_lesson_form.title(class='form-control is-invalid', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
                 <div class="invalid-feedback">
                     {% for error in new_lesson_form.title.errors %}
                         <span>{{ error }}</span>
                     {% endfor %}
                 </div>
             {% else %}
-                {{ new_lesson_form.title(class='form-control') }}
+                {{ new_lesson_form.title(class='form-control', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
             {% endif %}
         </div>
 
         <!-- Slug field -->
         <div class="mb-3">
-            {{ new_lesson_form.slug.label(class='form-control-label') }}
+            {{ new_lesson_form.slug.label(class='form-control-label text-light') }}
             {% if new_lesson_form.slug.errors %}
-                {{ new_lesson_form.slug(class='form-control is-invalid') }}
+                {{ new_lesson_form.slug(class='form-control is-invalid', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
                 <div class="invalid-feedback">
                     {% for error in new_lesson_form.slug.errors %}
                         <span>{{ error }}</span>
                     {% endfor %}
                 </div>
             {% else %}
-                {{ new_lesson_form.slug(class='form-control') }}
+                {{ new_lesson_form.slug(class='form-control', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
+            {% endif %}
+        </div>
+
+        <!-- Video file field -->
+        <div class="mb-3">
+            {{ new_lesson_form.video.label(class='form-control-label text-light') }}
+            {% if new_lesson_form.video.errors %}
+                {{ new_lesson_form.video(class='form-control is-invalid', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
+                <div class="invalid-feedback">
+                    {% for error in new_lesson_form.video.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ new_lesson_form.video(class='form-control', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
             {% endif %}
         </div>
 
         <!-- Content field -->
         <div class="mb-3">
-            {{ new_lesson_form.content.label(class='form-control-label') }}
+            {{ new_lesson_form.content.label(class='form-control-label text-light') }}
             {% if new_lesson_form.content.errors %}
-                {{ new_lesson_form.content(class='form-control is-invalid') }}
+                {{ new_lesson_form.content(class='form-control is-invalid', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
                 <div class="invalid-feedback">
                     {% for error in new_lesson_form.content.errors %}
                         <span>{{ error }}</span>
                     {% endfor %}
                 </div>
             {% else %}
-                {{ new_lesson_form.content(class='form-control') }}
+                {{ new_lesson_form.content(class='form-control', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
             {% endif %}
         </div>
 
         <!-- Thumbnail field -->
         <div class="mb-3">
-            {{ new_lesson_form.thumbnail.label(class='form-control-label') }}
+            {{ new_lesson_form.thumbnail.label(class='form-control-label text-light') }}
             {% if new_lesson_form.thumbnail.errors %}
-                {{ new_lesson_form.thumbnail(class='form-control is-invalid') }}
+                {{ new_lesson_form.thumbnail(class='form-control is-invalid', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
                 <div class="invalid-feedback">
                     {% for error in new_lesson_form.thumbnail.errors %}
                         <span>{{ error }}</span>
                     {% endfor %}
                 </div>
             {% else %}
-                {{ new_lesson_form.thumbnail(class='form-control') }}
+                {{ new_lesson_form.thumbnail(class='form-control', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
             {% endif %}
         </div>
 
@@ -99,10 +113,10 @@
     <!-- Modal for New Course -->
     <div class="modal fade" id="newCourse" tabindex="-1" aria-labelledby="newCourseModal" aria-hidden="true">
         <div class="modal-dialog">
-            <div class="modal-content">
+            <div class="modal-content" style="background-color: #2d2d2d; color: #fff;">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="newCourseModal">Create New Course</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <h5 class="modal-title text-warning" id="newCourseModal">Create New Course</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="new-course-form" method="POST" enctype="multipart/form-data">
@@ -110,25 +124,25 @@
 
                         <!-- Course Title -->
                         <div class="mb-3">
-                            {{ new_course_form.title.label(class='form-control-label') }}
-                            {{ new_course_form.title(class='form-control') }}
+                            {{ new_course_form.title.label(class='form-control-label text-light') }}
+                            {{ new_course_form.title(class='form-control', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
                         </div>
 
                         <!-- Course Description -->
                         <div class="mb-3">
-                            {{ new_course_form.description.label(class='form-control-label') }}
-                            {{ new_course_form.description(class='form-control') }}
+                            {{ new_course_form.description.label(class='form-control-label text-light') }}
+                            {{ new_course_form.description(class='form-control', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
                         </div>
 
                         <!-- Course Icon -->
                         <div class="mb-3">
-                            {{ new_course_form.icon.label(class='form-control-label') }}
-                            {{ new_course_form.icon(class='form-control') }}
+                            {{ new_course_form.icon.label(class='form-control-label text-light') }}
+                            {{ new_course_form.icon(class='form-control', style="background-color: #2d2d2d; color: #fff; border: 1px solid #d4af37;") }}
                         </div>
 
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Create Course</button>
+                            <button type="submit" class="btn btn-outline-warning">Create Course</button>
                         </div>
                     </form>
                 </div>
@@ -139,10 +153,9 @@
     </div> <!-- End of new_lesson div -->
 {% endblock new_lesson %}
 
-<!-- إضافة كود JavaScript في النهاية -->
 <script>
     document.getElementById("new-course-form").addEventListener("submit", function (e) {
-        e.preventDefault(); // منع إعادة تحميل الصفحة
+        e.preventDefault();
         const formData = new FormData(this);
 
         fetch("/dashboard/new_lesson", {
@@ -152,7 +165,6 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                // إغلاق المودال عند النجاح فقط
                 const modal = bootstrap.Modal.getInstance(document.getElementById("newCourse"));
                 modal.hide();
             } else {

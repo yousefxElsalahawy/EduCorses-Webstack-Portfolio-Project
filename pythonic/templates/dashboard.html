@@ -1,30 +1,30 @@
-{%extends "layout.html"%}
+{% extends "layout.html"%}
 {% block content%}
 <!-- Tabs -->
-<div class="container my-5">
+<div class="container my-5" style="background: linear-gradient(135deg, #212529, #3a3a3a); border-radius: 10px; padding: 20px;">
     <nav>
-        <div class="nav nav-tabs" id="tablist">
+        <div class="nav nav-tabs" id="tablist" style="background: #343a40; border-radius: 10px;">
             <a class="link" href="/dashboard/profile">
                 <button class="{{'nav-link active' if active_tab=='profile' else 'nav-link'}}" id="nav-profile-tab"
                     data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab"
-                    aria-controls="nav-profile" aria-selected="true">Profile</button>
+                    aria-controls="nav-profile" aria-selected="true" style="color: #d4af37;">Profile</button>
             </a>
 
             <a class="link" href="/dashboard/new_lesson">
                 <button class="{{'nav-link active' if active_tab=='new_lesson' else 'nav-link'}}" id="nav-newLesson-tab"
                     data-bs-toggle="tab" data-bs-target="#nav-newLesson" type="button" role="tab"
-                    aria-controls="nav-newLesson" aria-selected="true">New Lesson</button>
+                    aria-controls="nav-newLesson" aria-selected="true" style="color: #d4af37;">New Lesson</button>
             </a>
 
             <a class="link" href="/dashboard/user_lessons">
                 <button class="{{'nav-link active' if active_tab=='user_lessons' else 'nav-link'}}"
                     id="nav-user_lessons-tab" data-bs-toggle="tab" data-bs-target="#nav-Lessons" type="button"
-                    role="tab" aria-controls="nav-Lessons" aria-selected="true">My Lessons</button>
+                    role="tab" aria-controls="nav-Lessons" aria-selected="true" style="color: #d4af37;">My Lessons</button>
             </a>
         </div>
     </nav>
     <!-- Tab contents here -->
-    <div class="tab-content" id="nav-tabContent">
+    <div class="tab-content" id="nav-tabContent" style="background: #343a40; border-radius: 10px; padding: 20px;">
         <!-- profile -->
         {% block profile %} {% endblock profile%}
         <!-- New Lesson -->
@@ -33,4 +33,12 @@
         {% block user_lessons %} {% endblock user_lessons %}
     </div>
 </div>
+
+<!-- Main content background -->
+<style>
+    body {
+        background: linear-gradient(135deg, #212529, #3a3a3a); /* Tinted gradient */
+        color: #fff; /* Text color for readability */
+    }
+</style>
 {% endblock content %}

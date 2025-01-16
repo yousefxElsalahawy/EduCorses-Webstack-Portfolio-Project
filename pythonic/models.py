@@ -12,29 +12,28 @@ class User(db.Model, UserMixin):
     lname = db.Column(db.String(25), nullable=False)
     username = db.Column(db.String(25), unique=True, nullable=False)
     email = db.Column(db.String(125), unique=True, nullable=False)
-    image_file = db.Column(db.String(20), nullable=False, default="default.jpg")
+    image_file = db.Column(db.String(20), nullable=False, default="default.png")
+    bio = db.Column(db.Text, nullable=True)
     password = db.Column(db.String(60), nullable=False)
     lessons = db.relationship("Lesson", backref="author", lazy=True)
 
     def __repr__(self):
         return f"User('{self.fname}', '{self.lname}', '{self.username}', '{self.email}', '{self.image_file}')"
 
-
 class Lesson(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, nullable=False, default=lambda: datetime.utcnow())
     content = db.Column(db.Text, nullable=False)
-    thumbnail = db.Column(
-        db.String(20), nullable=False, default="default_thumbnail.jpg"
-    )
-    slug = db.Column(db.String(32), nullable=False)
+    thumbnail = db.Column(db.String(20), nullable=False, default="default_thumbnail.jpg")
+    slug = db.Column(db.String(100), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey("course.id"), nullable=False)
+    video = db.Column(db.String(100), nullable=True)  # For uploaded videos
 
     def __repr__(self):
+        """Return a string representation of the Lesson instance, displaying the title and date posted."""
         return f"Lesson('{self.title}', '{self.date_posted}')"
-
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)

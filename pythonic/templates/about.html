@@ -1,5 +1,53 @@
-
-{%extends "layout.html"%}
-{% block content%}
-    <h1>About Page</h1>
+{% extends "layout.html" %}
+{% block content %}
+<div class="container p-5 text-light" style="background-color: #343a40;">
+    <h1 class="text-center text-warning display-4 mb-4">About EduCourses</h1>
+    <hr class="border-secondary mb-5">
+    
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="text-warning">Our Vision</h2>
+            <p class="lead">EduCourses is committed to creating a user-friendly platform that provides access to high-quality, interactive, and engaging educational resources. From beginners to advanced learners, we cater to a wide audience to empower career growth, lifelong learning, and skill mastery.</p>
+            
+            <h2 class="text-warning mt-5">Our Unique Features</h2>
+            <ul class="list-unstyled">
+                <li><strong class="text-warning">Immersive Learning:</strong> Experience video lectures, interactive quizzes, and collaborative projects that match your learning style.</li>
+                <li><strong class="text-warning">Expert Instructors:</strong> Learn from professionals who are passionate about sharing their expertise, guiding you every step of the way.</li>
+                <li><strong class="text-warning">Flexible Learning:</strong> Study at your own pace with personalized plans, live workshops, and self-paced courses.</li>
+            </ul>
+        </div>
+        
+        <div class="col-md-4">
+            <img src="{{ url_for('static', filename='images/learning.jpg') }}" alt="EduCourses Learning" class="img-fluid rounded shadow">
+        </div>
+    </div>
+    
+    <div class="row mt-5">
+        <div class="col-md-6">
+            <h2 class="text-warning">Our Technologies</h2>
+            <p>We leverage cutting-edge technologies to create a seamless learning experience:</p>
+            <ul>
+                <li><strong>Flask:</strong> A lightweight and flexible backend framework for server-side logic.</li>
+                <li><strong>MongoDB:</strong> A scalable NoSQL database ensuring efficient data management.</li>
+                <li><strong>Bootstrap 5:</strong> Responsive and modern designs for a mobile-friendly interface.</li>
+            </ul>
+        </div>
+        
+        <div class="col-md-6">
+            <h2 class="text-warning">Future Growth</h2>
+            <p>Our commitment to continuous improvement includes:</p>
+            <ul>
+                <li>Adding secure online payment integration.</li>
+                <li>Implementing progress tracking and performance analytics for learners.</li>
+                <li>Introducing a mobile app for enhanced accessibility.</li>
+            </ul>
+        </div>
+    </div>
+    
+    <hr class="border-secondary my-5">
+    <div class="text-center">
+        <h2 class="text-warning">Join Us and Empower Your Learning Journey</h2>
+        <p class="lead">Explore EduCourses today and embark on a path of knowledge, growth, and success.</p>
+    </div>
+</div>
 {% endblock content %}

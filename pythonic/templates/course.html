@@ -1,10 +1,10 @@
 {% extends "layout.html"%}
 {% block content %}
-<div class="container-fluid bg-secondary">
+<div class="container-fluid bg-dark">
     <div class="container">
         <div class="row p-5">
             <div class="col-6">
-                <img src="{{url_for('static', filename='course_icons/'+course.icon)}}" alt="">
+                <img src="{{url_for('static', filename='course_icons/'+course.icon)}}" alt="{{course.title}}" class="img-fluid rounded shadow">
             </div>
             <div class="col-6">
                 <span class="lead text-light">{{course.description}}</span>
@@ -12,32 +12,33 @@
         </div>
     </div>
 </div>
-<section class="bg-light">
+<section class="bg-secondary">
     <div class="container p-5">
-        <div class="row mb-5 ">
+        <div class="row mb-5">
         </div>
         <div class="row">
             {% for lesson in course.lessons %}
             <div class="col-sm-12 col-md-6 col-lg-4 pb-5 d-flex align-items-stretch">
-                <div class="card lesson">
-                    <img src="{{url_for('static', filename='lesson_thumbnails/'+lesson.thumbnail)}}" class="card-img">
+                <div class="card lesson border-0 bg-dark text-light shadow-lg">
+                    <img src="{{url_for('static', filename='lesson_thumbnails/'+lesson.thumbnail)}}" class="card-img rounded-top">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">
-                            <a class="text-decoration-none text-dark"
+                            <a class="text-decoration-none text-warning"
                                 href="{{url_for('lesson', lesson_slug=lesson.slug, course=lesson.course_name.title)}}">{{lesson.title}}</a>
                         </h5>
-                        <span><img class="article-img rounded-circle"
-                                src="{{url_for('static', filename='user_pics/'+lesson.author.image_file)}}" alt="">By:
-                            <a href="#" class="link">{{lesson.author.username}}</a></span>
+                        <span>
+                            <img class="article-img rounded-circle shadow-sm"
+                                src="{{url_for('static', filename='user_pics/'+lesson.author.image_file)}}" alt="Author Image">
+                            <span class="text-muted">By:</span>
+                            <a href="#" class="link text-warning">{{lesson.author.username}}</a>
+                        </span>
                         <span class="text-muted">On: {{lesson.date_posted.strftime('%Y-%m-%d')}}</span>
-
                     </div>
                 </div>
             </div>
             {% endfor %}
-
         </div>
     </div>
 </section>
 
-{% endblock content%}
+{% endblock content %}
