@@ -1,41 +1,91 @@
-{% extends "dashboard.html"%}
+{% extends "dashboard.html" %}
+
 {% block new_lesson %}
 
 <div class="{{'tab-pane show active fade p-3' if active_tab=='new_lesson' else 'tab-pane fade p-3'}}" id="nav-newLesson"
     role="tabpanel" aria-labelledby="nav-newLesson-tab">
-    <form action="/dashboard/new_lesson" method="POST">
-        {{ new_lesson_form.hidden_tag()}}
+    <form action="/dashboard/new_lesson" method="POST" enctype="multipart/form-data">
+        {{ new_lesson_form.hidden_tag() }}
         <legend class="border-bottom my-3">New Lesson</legend>
+
+        <!-- Course field -->
         <div class="mb-3">
-            <label for="courses" class="form-label">Course</label>
-            <select class="form-select">
-                <option selected>Choose a Course</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
+            {{ new_lesson_form.course.label(class='form-control-label') }}
+            {% if new_lesson_form.course.errors %}
+                {{ new_lesson_form.course(class='form-select is-invalid', id='course') }}
+                <div class="invalid-feedback">
+                    {% for error in new_lesson_form.course.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ new_lesson_form.course(class='form-select', id='course') }}
+            {% endif %}
             <button type="button" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#newCourse">
                 New Course?
             </button>
         </div>
+        
+        
+        <!-- Title field -->
         <div class="mb-3">
-            <label for="title" class="form-label">Title</label>
-            <input type="text" class="form-control" id="title" placeholder="title">
-        </div>
-        <div class="mb-3">
-            <label for="slug" class="form-label">Slug</label>
-            <input type="slug" class="form-control" id="title"
-                placeholder="Descriptive Short version of your title. SEO friendly">
-        </div>
-        <div class="mb-3">
-            <label for="Lesson" class="form-label">Lesson Article</label>
-            <textarea class="form-control" id="Lesson" rows="20"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="LessonImg" class="form-label">Lesson Image</label>
-            <input type="file" class="form-control" id="LessonImg">
+            {{ new_lesson_form.title.label(class='form-control-label') }}
+            {% if new_lesson_form.title.errors %}
+                {{ new_lesson_form.title(class='form-control is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in new_lesson_form.title.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ new_lesson_form.title(class='form-control') }}
+            {% endif %}
         </div>
 
+        <!-- Slug field -->
+        <div class="mb-3">
+            {{ new_lesson_form.slug.label(class='form-control-label') }}
+            {% if new_lesson_form.slug.errors %}
+                {{ new_lesson_form.slug(class='form-control is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in new_lesson_form.slug.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ new_lesson_form.slug(class='form-control') }}
+            {% endif %}
+        </div>
+
+        <!-- Content field -->
+        <div class="mb-3">
+            {{ new_lesson_form.content.label(class='form-control-label') }}
+            {% if new_lesson_form.content.errors %}
+                {{ new_lesson_form.content(class='form-control is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in new_lesson_form.content.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ new_lesson_form.content(class='form-control') }}
+            {% endif %}
+        </div>
+
+        <!-- Thumbnail field -->
+        <div class="mb-3">
+            {{ new_lesson_form.thumbnail.label(class='form-control-label') }}
+            {% if new_lesson_form.thumbnail.errors %}
+                {{ new_lesson_form.thumbnail(class='form-control is-invalid') }}
+                <div class="invalid-feedback">
+                    {% for error in new_lesson_form.thumbnail.errors %}
+                        <span>{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% else %}
+                {{ new_lesson_form.thumbnail(class='form-control') }}
+            {% endif %}
+        </div>
 
         <div class="form-group">
             <div class="col-12">
@@ -43,6 +93,10 @@
             </div>
         </div>
     </form>
+    {{ ckeditor.load() }}
+    {{ ckeditor.config(name='content') }}
+
+    <!-- Modal for New Course -->
     <div class="modal fade" id="newCourse" tabindex="-1" aria-labelledby="newCourseModal" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -51,32 +105,60 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="" method="">
+                    <form id="new-course-form" method="POST" enctype="multipart/form-data">
+                        {{ new_course_form.hidden_tag() }}
+
+                        <!-- Course Title -->
                         <div class="mb-3">
-                            <label for="CourseName" class="form-label">Course Name</label>
-                            <input type="text" class="form-control" id="CourseName" placeholder="Course Name">
-                        </div>
-                        <div class="mb-3">
-                            <label for="CourseDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="CourseDescription" rows="3"></textarea>
+                            {{ new_course_form.title.label(class='form-control-label') }}
+                            {{ new_course_form.title(class='form-control') }}
                         </div>
 
+                        <!-- Course Description -->
                         <div class="mb-3">
-                            <label for="CourseImg" class="form-label">Course Image</label>
-                            <input type="file" class="form-control" id="CourseImg">
+                            {{ new_course_form.description.label(class='form-control-label') }}
+                            {{ new_course_form.description(class='form-control') }}
+                        </div>
 
+                        <!-- Course Icon -->
+                        <div class="mb-3">
+                            {{ new_course_form.icon.label(class='form-control-label') }}
+                            {{ new_course_form.icon(class='form-control') }}
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Create Course</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Create</button>
                 </div>
             </div>
         </div>
     </div>
 
-</div>
-
-
+    </div> <!-- End of new_lesson div -->
 {% endblock new_lesson %}
+
+<!-- إضافة كود JavaScript في النهاية -->
+<script>
+    document.getElementById("new-course-form").addEventListener("submit", function (e) {
+        e.preventDefault(); // منع إعادة تحميل الصفحة
+        const formData = new FormData(this);
+
+        fetch("/dashboard/new_lesson", {
+            method: "POST",
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // إغلاق المودال عند النجاح فقط
+                const modal = bootstrap.Modal.getInstance(document.getElementById("newCourse"));
+                modal.hide();
+            } else {
+                alert("Error: " + data.error);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+    });
+</script>
