@@ -2,7 +2,7 @@ import secrets
 from PIL import Image
 import os
 from pythonic.models import User, Lesson, Course
-from flask import render_template, url_for, flash, redirect, request, session,jsonify
+from flask import render_template, url_for, flash, redirect, request, session,jsonify,abort
 from pythonic.forms import (
     NewCourseForm,
     NewLessonForm,
@@ -251,3 +251,24 @@ def course(course_title):
 def courses():
     courses = Course.query.all()
     return render_template("courses.html", title="Courses", courses=courses)
+
+
+
+@app.route("/dashboard/user_lessons", methods=["GET", "POST"])
+@login_required
+def user_lessons():
+    return render_template(
+        "user_lessons.html", title="Your Lessons", active_tab="user_lessons"
+    )
+
+
+@app.route("/lesson/<lesson_id>/delete", methods=["POST"])
+def delete_lesson(lesson_id):
+    lesson = Lesson.query.get_or_404(lesson_id)
+    if lesson.author != current_user:
+        abort(403)
+    db.session.delete(lesson)
+    db.session.commit()
+    flash("Your lesson has been deleted!", "success")
+    return redirect(url_for("user_lessons"))
+
