@@ -2,8 +2,14 @@ import secrets
 from PIL import Image
 import os
 from pythonic.models import User, Lesson, Course
-from flask import render_template, url_for, flash, redirect, request
-from pythonic.forms import RegistrationForm, LoginForm, UpdateProfileForm, NewLessonForm
+from flask import render_template, url_for, flash, redirect, request, session,jsonify
+from pythonic.forms import (
+    NewCourseForm,
+    NewLessonForm,
+    RegistrationForm,
+    LoginForm,
+    UpdateProfileForm,
+)
 from pythonic import app, bcrypt, db
 from flask_login import (
     login_required,
@@ -12,6 +18,7 @@ from flask_login import (
     logout_user,
     login_required,
 )
+
 
 lessons = [
     {
@@ -98,9 +105,24 @@ def save_picture(form_picture):
     return picture_name
 
 
+def get_previous_next_lesson(lesson):
+    course = lesson.course_name
+    for lsn in course.lessons:
+        if lsn.title == lesson.title:
+            index = course.lessons.index(lsn)
+            previous_lesson = course.lessons[index - 1] if index > 0 else None
+            next_lesson = (
+                course.lessons[index + 1] if index < len(course.lessons) - 1 else None
+            )
+            break
+    return previous_lesson, next_lesson
+
+
 @app.route("/")
 @app.route("/home")
 def home():
+    lessons = Lesson.query.all()
+    courses = Course.query.all()
     return render_template("home.html", lessons=lessons, courses=courses)
 
 
@@ -187,15 +209,62 @@ def profile():
         image_file=image_file,
         active_tab="profile",
     )
-
-
 @app.route("/dashboard/new_lesson", methods=["GET", "POST"])
 @login_required
 def new_lesson():
     new_lesson_form = NewLessonForm()
+    new_course_form = NewCourseForm()
+
+    form = ""
+    flag = session.pop("flag", False)
+
+    # تحديد نوع النموذج المرسل
+    if "content" in request.form:
+        form = "new_lesson_form"
+    elif "description" in request.form:
+        form = "new_course_form"
+
+    # معالجة نموذج إضافة درس جديد
+    if form == "new_lesson_form" and new_lesson_form.validate_on_submit():
+        lesson_slug = str(new_lesson_form.slug.data).replace(" ", "-")
+        course = new_lesson_form.course.data
+        lesson = Lesson(
+            title=new_lesson_form.title.data,
+            content=new_lesson_form.content.data,
+            slug=lesson_slug,
+            author=current_user,  # حفظ المستخدم الحالي
+            course_name=course,
+        )
+        db.session.add(lesson)
+        db.session.commit()
+        flash("Your lesson has been created!", "success")
+        return redirect(url_for("home"))
+
+    # معالجة نموذج إضافة كورس جديد
+    elif form == "new_course_form" and new_course_form.validate_on_submit():
+        course_title = str(new_course_form.title.data).replace(" ", "-")
+        course = Course(
+            title=course_title,
+            description=new_course_form.description.data,
+        )
+        db.session.add(course)
+        db.session.commit()
+        session["flag"] = True
+        flash("New Course has been created!", "success")
+        return redirect(url_for("dashboard"))
+
+    # جلب أول 6 كورسات فقط من قاعدة البيانات
+    courses = Course.query.limit(6).all()
+
+    # تحديد النافذة المنبثقة التي ستظهر
+    modal = None if flag else "newCourse"
+
     return render_template(
         "new_lesson.html",
         title="New Lesson",
         new_lesson_form=new_lesson_form,
+        new_course_form=new_course_form,
         active_tab="new_lesson",
+        modal=modal,
+        courses=courses,  # تمرير الكورسات إلى القالب
     )
