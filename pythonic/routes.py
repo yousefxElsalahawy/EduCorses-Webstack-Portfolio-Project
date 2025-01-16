@@ -3,7 +3,7 @@ from PIL import Image
 import os
 from pythonic.models import User, Lesson, Course
 from flask import render_template, url_for, flash, redirect, request
-from pythonic.forms import RegistrationForm, LoginForm, UpdateProfileForm
+from pythonic.forms import RegistrationForm, LoginForm, UpdateProfileForm, NewLessonForm
 from pythonic import app, bcrypt, db
 from flask_login import (
     login_required,
@@ -188,3 +188,14 @@ def profile():
         active_tab="profile",
     )
 
+
+@app.route("/dashboard/new_lesson", methods=["GET", "POST"])
+@login_required
+def new_lesson():
+    new_lesson_form = NewLessonForm()
+    return render_template(
+        "new_lesson.html",
+        title="New Lesson",
+        new_lesson_form=new_lesson_form,
+        active_tab="new_lesson",
+    )
