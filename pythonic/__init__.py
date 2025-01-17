@@ -18,7 +18,19 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
+
+
 ckeditor = CKEditor(app)
+
+
+# CKEditor config
+app.config['CKEDITOR_SERVE_LOCAL'] = True
+app.config['CKEDITOR_HEIGHT'] = 400
+app.config['CKEDITOR_CODE_THEME'] = 'monokai_sublime'
+app.config['CKEDITOR_ENABLE_CODESNIPPET'] = True
+app.config['CKEDITOR_EXTRA_PLUGINS'] = ['youtube', 'codesnippet']
+
+
 bootstrap = Bootstrap(app) 
 
 login_manager.login_view = "login"

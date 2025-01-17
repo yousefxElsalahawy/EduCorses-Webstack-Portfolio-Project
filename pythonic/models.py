@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from pythonic import db, login_manager
 from flask_login import UserMixin
 
@@ -23,7 +23,7 @@ class User(db.Model, UserMixin):
 class Lesson(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=lambda: datetime.utcnow())
+    date_posted = db.Column(db.DateTime, nullable=False, default=lambda: datetime.now(timezone.utc))
     content = db.Column(db.Text, nullable=False)
     thumbnail = db.Column(db.String(20), nullable=False, default="default_thumbnail.jpg")
     slug = db.Column(db.String(100), nullable=False)
