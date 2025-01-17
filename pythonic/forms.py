@@ -112,7 +112,7 @@ class NewLessonForm(FlaskForm):
         "Thumbnail", validators=[DataRequired(), FileAllowed(["jpg", "png"])]
     )
             # New field for video upload
-    video = FileField('Video', validators=[DataRequired(), FileAllowed(["mp4", "avi", "mov", "mkv", "flv"])])  # Added video types
+    video = FileField('Video', validators=[FileAllowed(["mp4", "avi", "mov", "mkv", "flv"])])  # Added video types
 
     submit = SubmitField("Post")
 
