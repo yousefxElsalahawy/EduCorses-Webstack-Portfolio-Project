@@ -102,17 +102,16 @@ on mac :source .venv/bin/activate
 On Windows: .venv\Scripts\activate
 
 Step 3: Install Dependencies
+python.exe -m pip install --upgrade pip
 pip install -r requirements.txt
 
 
-Step 4: Set Up the Database
-
+Step 4: Set Up the Database if instance folder not found
 Initialize the database:
 flask db init
 
-Create the initial migration:
+Create the initial migration: if migrations folder not found
 flask db migrate -m "Initial migration"
-
 Apply the migrations:
 flask db upgrade
 
