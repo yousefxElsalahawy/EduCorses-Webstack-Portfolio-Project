@@ -230,6 +230,7 @@ EduCourses-Webstack-Portfolio-Project/
 ├── requirements.txt      # Python dependencies
 └── README.md             # Project documentation
 
+
 ______________________________________________________________________________________________________
 
 
